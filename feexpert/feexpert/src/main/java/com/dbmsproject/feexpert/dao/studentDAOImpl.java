@@ -3,10 +3,12 @@ package com.dbmsproject.feexpert.dao;
 import com.dbmsproject.feexpert.model.FeeDetail;
 import com.dbmsproject.feexpert.model.Student;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,46 +20,74 @@ public class studentDAOImpl implements studentDAO{
 
     @Override
     public boolean checkUserPassword(int userId, String password) {
-        String sqlStatement = "select * from student where userId = ?";
-        Student student = jdbcTemplate.queryForObject(sqlStatement, new Object[] {userId}, new BeanPropertyRowMapper<Student>(Student.class));
-        assert student != null;
-        return student.getPassword().equals(password);
+        try {
+            String sqlStatement = "select * from student where userId = ?";
+            Student student = jdbcTemplate.queryForObject(sqlStatement, new Object[] {userId}, new BeanPropertyRowMapper<Student>(Student.class));
+            assert student != null;
+            return student.getPassword().equals(password);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Override
     public List<Student> viewStudentWithScholarship() {
-        String sqlStatement = "SELECT * FROM student WHERE scholarship > 0";
-        return jdbcTemplate.query(sqlStatement, new BeanPropertyRowMapper<Student>(Student.class));
+        try {
+            String sqlStatement = "SELECT * FROM student WHERE scholarship > 0";
+            return jdbcTemplate.query(sqlStatement, new BeanPropertyRowMapper<Student>(Student.class));
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     @Override
     public int addStudent(Student student) {
-        String sqlStatement = "insert into student values (?,?,?,?,?,?,?,?,?)";
-        return jdbcTemplate.update(sqlStatement, student.getStudentID(),student.getStudentName(),student.getUserId(), student.getPassword(),student.getSemesterId(),student.getBatchId(),student.getContact(),student.getAddress(),student.getScholarship());
+        try {
+            String sqlStatement = "insert into student values (?,?,?,?,?,?,?,?,?)";
+            return jdbcTemplate.update(sqlStatement, student.getStudentID(),student.getStudentName(),student.getUserId(), student.getPassword(),student.getSemesterId(),student.getBatchId(),student.getContact(),student.getAddress(),student.getScholarship());
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     @Override
     public int deleteStudent(int studentId) {
-        String sqlStatement = "delete from student where studentID = ?";
-        return jdbcTemplate.update(sqlStatement, studentId);
+        try {
+            String sqlStatement = "delete from student where studentID = ?";
+            return jdbcTemplate.update(sqlStatement, studentId);
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     @Override
     public int updateStudent(Student student, int studentId) {
-        String sqlStatement ="UPDATE student SET studentName = ?, userId = ?, password = ?, semesterId = ?, batchId = ?, contact = ?, address = ?, scholarship = ? WHERE studentID = ?";
-        return jdbcTemplate.update(sqlStatement, student.getStudentName(),student.getUserId(), student.getPassword(),student.getSemesterId(),student.getBatchId(),student.getContact(),student.getAddress(),student.getScholarship(), studentId);
+        try {
+            String sqlStatement ="UPDATE student SET studentName = ?, userId = ?, password = ?, semesterId = ?, batchId = ?, contact = ?, address = ?, scholarship = ? WHERE studentID = ?";
+            return jdbcTemplate.update(sqlStatement, student.getStudentName(),student.getUserId(), student.getPassword(),student.getSemesterId(),student.getBatchId(),student.getContact(),student.getAddress(),student.getScholarship(), studentId);
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     @Override
     public List<Student> getStudents() {
-        String sqlStatement = "select * from student;";
-        return jdbcTemplate.query(sqlStatement, new BeanPropertyRowMapper<Student>(Student.class));
+        try {
+            String sqlStatement = "select * from student;";
+            return jdbcTemplate.query(sqlStatement, new BeanPropertyRowMapper<Student>(Student.class));
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     @Override
     public Student getStudentById(int studentId) {
-        String sqlStatement = "select * from student where studentID = ?";
-        return jdbcTemplate.queryForObject(sqlStatement, new Object[] {studentId}, new BeanPropertyRowMapper<Student>(Student.class));
+        try {
+            String sqlStatement = "select * from student where studentID = ?";
+            return jdbcTemplate.queryForObject(sqlStatement, new Object[] {studentId}, new BeanPropertyRowMapper<Student>(Student.class));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
