@@ -114,6 +114,11 @@ public class studentDAOImpl implements studentDAO{
     @Override
     public boolean isFeePending(int studentId) {
         try {
+            String checkSql = "SELECT COUNT(*) FROM student WHERE studentID = ?";
+            int count = jdbcTemplate.queryForObject(checkSql, Integer.class, studentId);
+            if (count == 0) {
+                throw new RuntimeException("Student with ID " + studentId + " does not exist in the student table");
+            }
             String sqlStatement = "select * from student s where s.studentID not in (select studentId from transaction_details td where td.semesterId = s.semesterId) and s.studentID = ?";
             List<Student> sid = jdbcTemplate.query(sqlStatement, new Object[] {studentId}, new BeanPropertyRowMapper<Student>(Student.class));
             return sid.size() != 0;

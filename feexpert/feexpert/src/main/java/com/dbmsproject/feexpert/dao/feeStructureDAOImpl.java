@@ -62,7 +62,7 @@ public class feeStructureDAOImpl implements feeStructureDAO{
             assert feeStructure!=null;
             return feeStructure;
         } catch (Exception e) {
-            return null;
+            return new FeeStructure();
         }
     }
 
